@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box } from 'grommet';
+import { Box, Clock, Text } from 'grommet';
 
 const convertToSeconds = ({hours, minutes, seconds}) => {
     return 3600 * hours + 60 * minutes + seconds
@@ -16,22 +16,40 @@ const CountdownTimer = ({currentTime, target}) => {
 
     let secondsToClosingTime = convertToSeconds(target) - convertToSeconds(currentTime);
 
+
+    let isoHour = formatWithLeadingZero(currentTime.hours);
+    let isoMinutes = formatWithLeadingZero(currentTime.minutes);
+    let isoSeconds = formatWithLeadingZero(currentTime.seconds);
+
+    let isoStr = `T${isoHour}:${isoMinutes}:${isoSeconds}`;
+
+    let isMorning = currentTime.hours < 12;
+
     let hours = Math.floor(secondsToClosingTime / 3600);
     secondsToClosingTime = secondsToClosingTime % 3600;
     let minutes = Math.floor(secondsToClosingTime / 60);
     let seconds = secondsToClosingTime % 60;
-    let countdown = `${formatWithLeadingZero(hours)}:${formatWithLeadingZero(minutes)}:${formatWithLeadingZero(seconds)}`;
 
-    let displayHour = currentTime.hours % 12 === 0 ? 12 : currentTime.hours % 12;
-    displayHour = formatWithLeadingZero(displayHour);
-    let displayMinutes = formatWithLeadingZero(currentTime.minutes);
-    let displaySeconds = formatWithLeadingZero(currentTime.seconds);
-    let civilianTimeSuffix = currentTime.hours < 12 ? 'AM' : 'PM';
+    let countdown = `T${formatWithLeadingZero(hours)}:${formatWithLeadingZero(minutes)}:${formatWithLeadingZero(seconds)}`;
+
 
     return (
-        <Box>
-            <p>It's {displayHour}:{displayMinutes}:{displaySeconds} {civilianTimeSuffix}</p>
-            <p>{countdown} until Closin' Time</p>
+        <Box
+            background="light-5"
+            direction="column"
+            border
+            width="50%"
+        >
+            <Box
+                direction="row"
+            >
+                <Text>It's <Clock run={false} time={isoStr} type={"digital"} hourLimit={12}/> {isMorning ? 'AM' : 'PM'}</Text>
+            </Box>
+            <Box
+                direction="row"
+            >
+                <Text><Clock run={false} time={countdown} type={"digital"}/> until Closin' Time</Text>
+            </Box>
         </Box>
     )}
 
